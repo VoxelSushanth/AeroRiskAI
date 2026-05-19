@@ -1,0 +1,79 @@
+# Sarbanes-Oxley (SOX) Compliance Controls
+
+## Section 302 - Corporate Responsibility for Financial Reports
+1. CEOs and CFOs must certify the accuracy of financial reports.
+2. Certifications must confirm disclosure controls and procedures are effective.
+3. Internal control over financial reporting must be evaluated quarterly.
+
+## Section 404 - Management Assessment of Internal Controls
+1. Management must assess effectiveness of internal control structure annually.
+2. External auditor must attest to management's assessment.
+3. Deficiencies must be classified as: Control Deficiency, Significant Deficiency, or Material Weakness.
+
+## Section 409 - Real-Time Issuer Disclosures
+1. Material changes in financial condition must be disclosed on a rapid and current basis.
+2. Disclosure timeline: Within 4 business days of triggering event.
+3. Electronic filing via EDGAR system required.
+
+## Section 802 - Criminal Penalties for Document Destruction
+1. Altering, destroying, or falsifying records is prohibited.
+2. Audit workpapers must be retained for 7 years.
+3. Whistleblower protections apply.
+
+## Key IT General Controls (ITGC)
+
+### Access Controls
+- Unique user identification required
+- Role-based access control (RBAC)
+- Periodic access reviews (quarterly minimum)
+- Immediate deprovisioning upon termination
+- Multi-factor authentication for privileged access
+
+### Change Management
+- Formal change request process
+- Segregation of duties (development vs production)
+- Testing requirements before deployment
+- Approval workflow for production changes
+- Rollback procedures documented
+
+### Backup and Recovery
+- Daily incremental backups
+- Weekly full backups
+- Off-site storage of backup media
+- Quarterly recovery testing
+- Recovery Time Objective (RTO): <4 hours
+- Recovery Point Objective (RPO): <1 hour
+
+### System Monitoring
+- Continuous monitoring of critical systems
+- Alert thresholds defined and documented
+- Incident response procedures established
+- Log retention: minimum 7 years
+- Real-time alerting for critical events
+
+## Trading-Specific SOX Controls
+
+### Trade Capture and Validation
+- All trades must be captured within 15 minutes of execution
+- Automated validation against market prices
+- Exception reporting for out-of-range trades
+- Dual approval for manual adjustments
+
+### Position Reconciliation
+- Daily position reconciliation with custodians
+- Tolerance limits: $10,000 or 1% of position
+- Unreconciled items escalated within 24 hours
+- Monthly sign-off by finance team
+
+### Valuation Controls
+- Independent price verification daily
+- Hierarchy of pricing sources defined
+- Fair value calculations documented
+- Model validation annually
+
+## Audit Trail Requirements
+- Immutable transaction logs
+- Timestamp precision: milliseconds
+- User action logging (who, what, when)
+- System state snapshots at EOD
+- Tamper-evident storage

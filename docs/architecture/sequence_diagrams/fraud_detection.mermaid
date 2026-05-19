@@ -1,0 +1,63 @@
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant RB as Ring Buffer
+    participant ME as Matching Engine
+    participant L as Ledger
+    participant K as Kafka
+    participant A1 as Agent 1: Anomaly
+    participant A2 as Agent 2: RAG
+    participant A3 as Agent 3: Orchestrator
+    participant R as Redis
+    participant P as PostgreSQL
+    participant Alert as Operations
+
+    C->>G: Submit Order (suspicious)
+    G->>RB: Publish Event
+    RB->>ME: Process Batch
+    ME->>L: Update Balances
+    L-->>ME: Settlement Complete
+    ME->>K: Publish Trade Event
+    K-->>C: Order Filled
+
+    par Async AI Fraud Detection
+        K->>A1: Consume Event
+        activate A1
+        A1->>A1: Velocity Check
+        A1->>A1: VWAP Deviation
+        A1->>A1: Wash Trade Detection
+        A1->>A1: Spoofing HMM Analysis
+        A1-->>K: Anomaly Score: 0.75
+        deactivate A1
+
+        K->>A2: Consume Event + Anomaly
+        activate A2
+        A2->>A2: Vector Search (Qdrant)
+        A2->>A2: Compliance Rule Lookup
+        A2->>A2: Sanctions Check (OFAC)
+        A2->>A2: User Profile Retrieval
+        A2-->>K: Context Bundle
+        deactivate A2
+
+        K->>A3: Anomaly + Context
+        activate A3
+        A3->>A3: LLM Risk Assessment
+        A3->>A3: Generate Risk Score: 0.82
+        A3->>A3: Decision: FLAG
+        A3->>R: Set Circuit Breaker
+        activate R
+        R-->>A3: Confirmed
+        deactivate R
+        A3->>P: Create Incident Report
+        activate P
+        P-->>A3: Report ID: INC-12345
+        deactivate P
+        A3->>Alert: Send Alert (Slack/PagerDuty)
+        activate Alert
+        Alert-->>A3: Alert Sent
+        deactivate Alert
+        A3-->>K: Decision Persisted
+        deactivate A3
+    end
+
+    Note over C,Alert: Transaction allowed but flagged<br/>Future transactions may be blocked<br/>Incident INC-12345 created

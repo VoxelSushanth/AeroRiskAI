@@ -1,0 +1,128 @@
+{
+  "profiles": [
+    {
+      "user_id": "USR-001",
+      "name": "John Smith",
+      "type": "retail",
+      "risk_tolerance": "moderate",
+      "investment_objectives": ["growth", "income"],
+      "account_value_usd": 250000,
+      "trading_experience_years": 5,
+      "typical_order_size_usd": 10000,
+      "max_daily_volume_usd": 100000,
+      "allowed_instruments": ["stocks", "etfs", "options_level_2"],
+      "restricted_countries": ["IR", "SY", "KP"],
+      "kyc_status": "verified",
+      "kyc_date": "2023-01-15",
+      "pep_status": false,
+      "sanctions_checked": true,
+      "last_review_date": "2024-01-15"
+    },
+    {
+      "user_id": "USR-002",
+      "name": "Acme Capital Management LLC",
+      "type": "institutional",
+      "risk_tolerance": "aggressive",
+      "investment_objectives": ["growth", "speculation"],
+      "account_value_usd": 50000000,
+      "trading_experience_years": 15,
+      "typical_order_size_usd": 1000000,
+      "max_daily_volume_usd": 50000000,
+      "allowed_instruments": ["stocks", "etfs", "options_level_3", "futures", "forex"],
+      "restricted_countries": ["IR", "SY", "KP", "CU"],
+      "kyc_status": "verified",
+      "kyc_date": "2022-06-01",
+      "pep_status": false,
+      "sanctions_checked": true,
+      "last_review_date": "2024-06-01"
+    },
+    {
+      "user_id": "USR-003",
+      "name": "Maria Garcia",
+      "type": "retail",
+      "risk_tolerance": "conservative",
+      "investment_objectives": ["preservation", "income"],
+      "account_value_usd": 75000,
+      "trading_experience_years": 2,
+      "typical_order_size_usd": 2000,
+      "max_daily_volume_usd": 10000,
+      "allowed_instruments": ["stocks", "etfs", "bonds"],
+      "restricted_countries": ["IR", "SY", "KP", "RU"],
+      "kyc_status": "verified",
+      "kyc_date": "2023-09-20",
+      "pep_status": false,
+      "sanctions_checked": true,
+      "last_review_date": "2024-03-20"
+    },
+    {
+      "user_id": "USR-004",
+      "name": "Global Hedge Fund LP",
+      "type": "institutional",
+      "risk_tolerance": "aggressive",
+      "investment_objectives": ["growth", "speculation", "arbitrage"],
+      "account_value_usd": 500000000,
+      "trading_experience_years": 20,
+      "typical_order_size_usd": 10000000,
+      "max_daily_volume_usd": 500000000,
+      "allowed_instruments": ["all"],
+      "restricted_countries": [],
+      "kyc_status": "verified",
+      "kyc_date": "2021-03-10",
+      "pep_status": false,
+      "sanctions_checked": true,
+      "last_review_date": "2024-03-10",
+      "algo_trading_approved": true,
+      "high_frequency_trading": true
+    },
+    {
+      "user_id": "USR-005",
+      "name": "Ahmed Al-Rashid",
+      "type": "high_net_worth",
+      "risk_tolerance": "moderate",
+      "investment_objectives": ["growth", "diversification"],
+      "account_value_usd": 5000000,
+      "trading_experience_years": 10,
+      "typical_order_size_usd": 100000,
+      "max_daily_volume_usd": 2000000,
+      "allowed_instruments": ["stocks", "etfs", "options_level_2", "bonds", "commodities"],
+      "restricted_countries": ["IR", "SY", "KP"],
+      "kyc_status": "pending_review",
+      "kyc_date": "2024-01-05",
+      "pep_status": true,
+      "pep_details": "Former government official - UAE",
+      "sanctions_checked": true,
+      "last_review_date": "2024-06-15",
+      "enhanced_due_diligence": true
+    }
+  ],
+  "risk_profiles": {
+    "conservative": {
+      "max_position_concentration": 0.10,
+      "max_daily_loss_limit": 0.02,
+      "margin_allowed": false,
+      "options_allowed": false
+    },
+    "moderate": {
+      "max_position_concentration": 0.25,
+      "max_daily_loss_limit": 0.05,
+      "margin_allowed": true,
+      "margin_requirement": 0.50,
+      "options_allowed": true,
+      "max_options_level": 2
+    },
+    "aggressive": {
+      "max_position_concentration": 0.50,
+      "max_daily_loss_limit": 0.10,
+      "margin_allowed": true,
+      "margin_requirement": 0.25,
+      "options_allowed": true,
+      "max_options_level": 3
+    }
+  },
+  "watchlist_flags": {
+    "pattern_day_trader": ["USR-003"],
+    "high_frequency_trader": ["USR-004"],
+    "pep_enhanced_monitoring": ["USR-005"],
+    "previous_violations": []
+  }
+}

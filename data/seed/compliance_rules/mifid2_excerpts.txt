@@ -1,0 +1,32 @@
+# MiFID II Compliance Rules
+
+## Article 16 - Algorithmic Trading Requirements
+1. Investment firms engaging in algorithmic trading shall have in place effective systems and risk controls.
+2. Systems shall ensure trading is conducted in an orderly manner and avoid creating disorderly market conditions.
+3. Firms must have business continuity arrangements to ensure maintenance of systems and prevent technical failures.
+
+## Article 17 - Market Making Obligations
+1. Algorithmic traders providing liquidity on a regular basis shall be subject to requirements to ensure adequate systems and controls.
+2. Market makers must quote prices at which they are willing to trade for most of the trading day.
+3. Exemptions may apply for periods of severe market stress.
+
+## Article 48 - Trading Venue Requirements
+1. Trading venues shall have in place circuit breakers that temporarily or permanently halt trading.
+2. Circuit breakers shall be triggered by significant price movements within short time periods.
+3. Parameters shall be calibrated based on liquidity, volatility, and market conditions.
+
+## Article 25 - Client Order Handling
+1. Firms must execute orders on terms most favorable to the client.
+2. Best execution policies must be disclosed to clients.
+3. Regular monitoring of execution quality is required.
+
+## Article 24 - Product Governance
+1. Manufacturers must identify target markets for each financial instrument.
+2. Distribution strategies must be consistent with identified target markets.
+3. Regular review of products against target market assumptions is required.
+
+## Key Risk Indicators
+- Maximum order-to-trade ratio: 10:1
+- Maximum message rate per second: 1000
+- Price collar deviation: ±10% from reference price
+- Minimum resting time for orders: 500ms (where applicable)
