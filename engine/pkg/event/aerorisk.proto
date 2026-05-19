@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package event;
+
+option go_package = "github.com/aerorisk/engine/pkg/event";
+
+// EventType represents the type of event in the system
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_ORDER_NEW = 1;
+  EVENT_TYPE_ORDER_CANCEL = 2;
+  EVENT_TYPE_ORDER_MODIFY = 3;
+  EVENT_TYPE_TRADE = 4;
+  EVENT_TYPE_SETTLEMENT = 5;
+  EVENT_TYPE_RISK_DECISION = 6;
+  EVENT_TYPE_CIRCUIT_BREAKER = 7;
+  EVENT_TYPE_AUDIT_LOG = 8;
+}
+
+// Event is the core event structure used throughout the system
+message Event {
+  string id = 1;
+  EventType type = 2;
+  int64 timestamp_ns = 3;
+  string symbol = 4;
+  string user_id = 5;
+  
+  // Order fields
+  string order_id = 6;
+  string side = 7;
+  int64 price = 8;  // Fixed-point: price * 1e9
+  int64 quantity = 9;
+  string status = 10;
+  
+  // Trade fields
+  string trade_id = 11;
+  string maker_order_id = 12;
+  string taker_order_id = 13;
+  
+  // Risk decision fields
+  string risk_decision = 14;
+  double risk_score = 15;
+  repeated string risk_factors = 16;
+  
+  // Circuit breaker fields
+  bool circuit_breaker_open = 17;
+  string circuit_breaker_reason = 18;
+  
+  // Metadata
+  map<string, string> metadata = 19;
+}
