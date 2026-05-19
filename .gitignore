@@ -1,53 +1,66 @@
 ```
-# Dependencies
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-.env
-.env.local
-.env.*
-
-# Go build artifacts
-*.o
-*.a
+*.py[cod]
+*$py.class
 *.so
-*.dylib
-*.dll
-*.exe
-*.out
-*.test
-_coverage.out
-
-# Build directories
+.Python
 build/
+develop-eggs/
 dist/
-target/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Logs
-*.log
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
 
-# Editor/IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
 
-# OS files
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+*.env.*
+
+# Testing
+.coverage
+htmlcov/
+.nox/
+.tox/
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+
+# Distribution / packaging
+pip-log.txt
+pip-delete-this-directory.txt
 .DS_Store
 Thumbs.db
 
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# Testing
-.pytest_cache/
-.mypy_cache/
+# Miscellaneous
+*.tmp
+*~
+.DS_Store
 ```
