@@ -47,7 +47,7 @@ func (me *MatchingEngine) matchOrder(ob *OrderBook, order *Order) []*Trade {
 	var trades []*Trade
 
 	if order.Side == SideBuy {
-		for ob.BestAsk() != nil && ob.BestAsk().Price.Value() <= order.Price.Value() && order.Quantity > 0 {
+		for ob.BestAsk() != nil && ob.BestAsk().Price <= order.Price.Value() && order.Quantity > 0 {
 			bestAsk := ob.BestAsk()
 			if len(bestAsk.Orders) == 0 {
 				break
@@ -78,7 +78,7 @@ func (me *MatchingEngine) matchOrder(ob *OrderBook, order *Order) []*Trade {
 			ob.AddOrder(order)
 		}
 	} else {
-		for ob.BestBid() != nil && ob.BestBid().Price.Value() >= order.Price.Value() && order.Quantity > 0 {
+		for ob.BestBid() != nil && ob.BestBid().Price >= order.Price.Value() && order.Quantity > 0 {
 			bestBid := ob.BestBid()
 			if len(bestBid.Orders) == 0 {
 				break

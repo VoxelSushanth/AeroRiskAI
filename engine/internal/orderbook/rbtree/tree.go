@@ -7,7 +7,7 @@ const (
 	Black
 )
 
-type Node[T comparable] struct {
+type Node[T any] struct {
 	key    T
 	value  interface{}
 	color  Color
@@ -16,12 +16,12 @@ type Node[T comparable] struct {
 	parent *Node[T]
 }
 
-type RBTree[T comparable] struct {
+type RBTree[T any] struct {
 	root *Node[T]
 	size int
 }
 
-func NewRBTree[T comparable]() *RBTree[T] {
+func NewRBTree[T any]() *RBTree[T] {
 	return &RBTree[T]{}
 }
 
@@ -37,9 +37,9 @@ func (t *RBTree[T]) Insert(key T, value interface{}) {
 
 	for current != nil {
 		parent = current
-		if key < current.key {
+		if less(key, current.key) {
 			current = current.left
-		} else if key > current.key {
+		} else if greater(key, current.key) {
 			current = current.right
 		} else {
 			current.value = value
@@ -50,7 +50,7 @@ func (t *RBTree[T]) Insert(key T, value interface{}) {
 	node.parent = parent
 	if parent == nil {
 		t.root = node
-	} else if key < parent.key {
+	} else if less(key, parent.key) {
 		parent.left = node
 	} else {
 		parent.right = node
@@ -96,7 +96,9 @@ func (t *RBTree[T]) fixInsert(node *Node[T]) {
 			}
 		}
 	}
-	t.root.color = Black
+	if t.root != nil {
+		t.root.color = Black
+	}
 }
 
 func (t *RBTree[T]) rotateLeft(node *Node[T]) {
@@ -138,9 +140,9 @@ func (t *RBTree[T]) rotateRight(node *Node[T]) {
 func (t *RBTree[T]) Search(key T) interface{} {
 	current := t.root
 	for current != nil {
-		if key < current.key {
+		if less(key, current.key) {
 			current = current.left
-		} else if key > current.key {
+		} else if greater(key, current.key) {
 			current = current.right
 		} else {
 			return current.value
@@ -151,4 +153,35 @@ func (t *RBTree[T]) Search(key T) interface{} {
 
 func (t *RBTree[T]) Size() int {
 	return t.size
+}
+
+// Helper functions for comparing values of type T
+func less[T any](a, b T) bool {
+	switch v := any(a).(type) {
+	case int:
+		return v < any(b).(int)
+	case int64:
+		return v < any(b).(int64)
+	case uint64:
+		return v < any(b).(uint64)
+	case float64:
+		return v < any(b).(float64)
+	default:
+		panic("unsupported type for comparison")
+	}
+}
+
+func greater[T any](a, b T) bool {
+	switch v := any(a).(type) {
+	case int:
+		return v > any(b).(int)
+	case int64:
+		return v > any(b).(int64)
+	case uint64:
+		return v > any(b).(uint64)
+	case float64:
+		return v > any(b).(float64)
+	default:
+		panic("unsupported type for comparison")
+	}
 }

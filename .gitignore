@@ -2,34 +2,37 @@
 # Compiled and build artifacts
 *.o
 *.obj
+*.out
 *.a
-*.lib
 *.so
 *.dll
 *.exe
-*.out
 
 # Dependencies
 vendor/
-*.mod
-*.sum
+node_modules/
+__pycache__/
+*.egg-info/
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
-
-# Editors
-.vscode/
-.idea/
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
+*.swo
 
 # Environment
 .env
 .env.local
 *.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build directories
+build/
+dist/
+target/
 ```

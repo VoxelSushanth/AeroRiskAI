@@ -4,10 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/twmb/franz-go/pkg/kgo"
-	"github.com/twmb/franz-go/pkg/kmsg"
 	"github.com/aerorisk/engine/pkg/event"
 )
 
@@ -39,13 +37,13 @@ func (p *KafkaPublisher) PublishOrderEvent(evt *event.OrderEvent) error {
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
-	msg := kmsg.Record{
+	record := &kgo.Record{
 		Key:   []byte(evt.OrderID),
 		Value: data,
-		Time:  time.Now().UTC(),
+		Topic: p.topics.Orders,
 	}
 
-	return p.client.Produce(context.Background(), p.topics.Orders, &msg)
+	return p.client.ProduceSync(context.Background(), record).FirstErr()
 }
 
 func (p *KafkaPublisher) PublishTradeEvent(evt *event.TradeEvent) error {
@@ -54,13 +52,13 @@ func (p *KafkaPublisher) PublishTradeEvent(evt *event.TradeEvent) error {
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
-	msg := kmsg.Record{
+	record := &kgo.Record{
 		Key:   []byte(evt.TradeID),
 		Value: data,
-		Time:  time.Now().UTC(),
+		Topic: p.topics.Trades,
 	}
 
-	return p.client.Produce(context.Background(), p.topics.Trades, &msg)
+	return p.client.ProduceSync(context.Background(), record).FirstErr()
 }
 
 func (p *KafkaPublisher) PublishRiskEvent(evt *event.RiskEvent) error {
@@ -69,13 +67,13 @@ func (p *KafkaPublisher) PublishRiskEvent(evt *event.RiskEvent) error {
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
-	msg := kmsg.Record{
+	record := &kgo.Record{
 		Key:   []byte(evt.AccountID),
 		Value: data,
-		Time:  time.Now().UTC(),
+		Topic: p.topics.RiskDecisions,
 	}
 
-	return p.client.Produce(context.Background(), p.topics.RiskDecisions, &msg)
+	return p.client.ProduceSync(context.Background(), record).FirstErr()
 }
 
 func (p *KafkaPublisher) PublishAuditEvent(evt *event.AuditEvent) error {
@@ -84,13 +82,13 @@ func (p *KafkaPublisher) PublishAuditEvent(evt *event.AuditEvent) error {
 		return fmt.Errorf("failed to marshal event: %w", err)
 	}
 
-	msg := kmsg.Record{
+	record := &kgo.Record{
 		Key:   []byte(evt.EventID),
 		Value: data,
-		Time:  time.Now().UTC(),
+		Topic: p.topics.AuditLog,
 	}
 
-	return p.client.Produce(context.Background(), p.topics.AuditLog, &msg)
+	return p.client.ProduceSync(context.Background(), record).FirstErr()
 }
 
 func (p *KafkaPublisher) Close() error {

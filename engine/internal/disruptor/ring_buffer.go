@@ -5,12 +5,6 @@ import (
 	"sync/atomic"
 )
 
-type EventSlot[T any] struct {
-	sequence int64
-	event    T
-	padding  [7]int64
-}
-
 type RingBuffer[T any] struct {
 	buffer  []EventSlot[T]
 	mask    int64

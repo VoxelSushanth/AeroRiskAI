@@ -134,6 +134,7 @@ func (s *AdminServer) liveHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
+	_ = ctx // Mark as used for future extensions
 	defer cancel()
 
 	adminAddr := getEnv("ADMIN_ADDR", ":9090")
