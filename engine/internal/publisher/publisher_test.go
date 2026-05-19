@@ -4,7 +4,7 @@ import (
 "testing"
 "time"
 
-"github.com/aerorisk-ai/engine/pkg/event"
+"github.com/aerorisk/engine/pkg/event"
 )
 
 func TestTopics(t *testing.T) {

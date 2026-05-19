@@ -6,7 +6,7 @@ import (
 "net/http"
 "sync"
 
-"github.com/aerorisk-ai/engine/internal/publisher"
+"github.com/aerorisk/engine/internal/publisher"
 "github.com/gorilla/websocket"
 )
 

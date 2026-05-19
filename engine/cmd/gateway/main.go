@@ -9,26 +9,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/aerorisk-ai/engine/internal/gateway"
-	"github.com/aerorisk-ai/engine/internal/publisher"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/prometheus"
-	"go.opentelemetry.io/otel/sdk/metric"
+	"github.com/aerorisk/engine/internal/gateway"
+	"github.com/aerorisk/engine/internal/publisher"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	// Setup OpenTelemetry Prometheus exporter
-	exporter, err := prometheus.New()
-	if err != nil {
-		log.Fatalf("failed to create prometheus exporter: %v", err)
-	}
-	meterProvider := metric.NewMeterProvider(metric.WithReader(exporter))
-	otel.SetMeterProvider(meterProvider)
-	defer meterProvider.Shutdown(ctx)
 
 	// Initialize Kafka publisher
 	kafkaBrokers := getEnv("KAFKA_BROKERS", "localhost:9092")
