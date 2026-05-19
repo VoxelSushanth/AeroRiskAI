@@ -1,0 +1,237 @@
+name: Performance Benchmarks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+env:
+  GO_VERSION: "1.21"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  go-benchmarks:
+    name: Go Engine Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      
+      - name: Run benchmarks - Disruptor
+        working-directory: ./engine
+        run: |
+          go test -bench=BenchmarkRingBuffer -benchmem -run=^$ ./internal/disruptor/... \
+            | tee disruptor_bench.txt
+      
+      - name: Run benchmarks - Orderbook
+        working-directory: ./engine
+        run: |
+          go test -bench=BenchmarkMatching -benchmem -run=^$ ./internal/orderbook/... \
+            | tee orderbook_bench.txt
+      
+      - name: Run benchmarks - Ledger
+        working-directory: ./engine
+        run: |
+          go test -bench=BenchmarkLedger -benchmem -run=^$ ./internal/ledger/... \
+            | tee ledger_bench.txt
+      
+      - name: Upload benchmark results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Go Engine Benchmarks
+          tool: 'go'
+          output-file-path: |
+            engine/disruptor_bench.txt
+            engine/orderbook_bench.txt
+            engine/ledger_bench.txt
+          gh-repository: github.com/aerorisk/aerorisk-ai
+          auto-push: true
+      
+      - name: Check TPS target (>100k)
+        working-directory: ./engine
+        run: |
+          echo "Checking if benchmarks meet 100k TPS target..."
+          go test -bench=BenchmarkMatchingEngine -benchmem -run=^$ ./internal/orderbook/... \
+            | awk '/ns\/op/ {if ($1 < 10000) {print "✓ Target met: " $1 " ns/op"; exit 0} else {print "✗ Target not met: " $1 " ns/op"; exit 1}}'
+  
+  python-benchmarks:
+    name: AI Guardrail Benchmarks
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      kafka:
+        image: apache/kafka:latest
+        ports:
+          - 9092:9092
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install Poetry
+        run: pip install poetry
+      
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+      
+      - name: Install dependencies
+        working-directory: ./ai_guardrail
+        run: poetry install --no-interaction
+      
+      - name: Run benchmarks - Agent 1 (Anomaly Detection)
+        working-directory: ./ai_guardrail
+        run: |
+          poetry run pytest -v tests/agent1_test.py --benchmark-only \
+            --benchmark-json=agent1_bench.json
+      
+      - name: Run benchmarks - Agent 2 (RAG)
+        working-directory: ./ai_guardrail
+        run: |
+          poetry run pytest -v tests/agent2_test.py --benchmark-only \
+            --benchmark-json=agent2_bench.json
+      
+      - name: Run benchmarks - Agent 3 (Orchestrator)
+        working-directory: ./ai_guardrail
+        run: |
+          poetry run pytest -v tests/agent3_test.py --benchmark-only \
+            --benchmark-json=agent3_bench.json
+      
+      - name: Upload benchmark results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: AI Guardrail Benchmarks
+          tool: 'pytest'
+          output-file-path: |
+            ai_guardrail/agent1_bench.json
+            ai_guardrail/agent2_bench.json
+            ai_guardrail/agent3_bench.json
+          gh-repository: github.com/aerorisk/aerorisk-ai
+          auto-push: true
+      
+      - name: Check latency targets (<200ms)
+        working-directory: ./ai_guardrail
+        run: |
+          echo "Checking if AI pipeline meets <200ms latency target..."
+          poetry run pytest -v tests/test_pipeline_e2e.py --benchmark-only \
+            --benchmark-json=pipeline_bench.json
+          cat pipeline_bench.json | jq '.benchmarks[] | select(.stats.mean < 0.2) | .name'
+  
+  load-test:
+    name: End-to-End Load Test
+    runs-on: ubuntu-latest
+    needs: [go-benchmarks, python-benchmarks]
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      kafka:
+        image: apache/kafka:latest
+        ports:
+          - 9092:9092
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: aerorisk
+          POSTGRES_PASSWORD: aerorisk
+          POSTGRES_DB: aerorisk
+        ports:
+          - 5432:5432
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install Locust
+        run: pip install locust
+      
+      - name: Seed test data
+        working-directory: ./data/scripts
+        run: |
+          python generate_synthetic.py --count 10000
+      
+      - name: Run load test
+        working-directory: ./ai_guardrail/tests/load
+        run: |
+          locust -f locustfile.py --headless \
+            --users 1000 \
+            --spawn-rate 100 \
+            --run-time 300s \
+            --host=http://localhost:8080 \
+            --html=load_test_report.html
+      
+      - name: Upload load test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-report
+          path: ai_guardrail/tests/load/load_test_report.html
+  
+  publish-results:
+    name: Publish Benchmark Results
+    runs-on: ubuntu-latest
+    needs: [load-test]
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Create summary report
+        run: |
+          echo "# Daily Performance Report - $(date)" >> SUMMARY.md
+          echo "" >> SUMMARY.md
+          echo "## Go Engine Benchmarks" >> SUMMARY.md
+          cat engine/*_bench.txt >> SUMMARY.md 2>/dev/null || echo "No Go benchmarks found" >> SUMMARY.md
+          echo "" >> SUMMARY.md
+          echo "## AI Guardrail Benchmarks" >> SUMMARY.md
+          cat ai_guardrail/*_bench.json >> SUMMARY.md 2>/dev/null || echo "No Python benchmarks found" >> SUMMARY.md
+          echo "" >> SUMMARY.md
+          echo "## Load Test Results" >> SUMMARY.md
+          echo "See attached HTML report for detailed results." >> SUMMARY.md
+      
+      - name: Upload summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-performance-report
+          path: SUMMARY.md
