@@ -371,17 +371,6 @@ The K8s manifests include HPA configurations:
 - **Engine**: Scale on CPU >70% or custom TPS metric
 - **AI Guardrail**: Scale on queue depth or latency
 
-### Production Checklist
-
-- [ ] Configure TLS for gRPC/WebSocket
-- [ ] Set up external Redis cluster
-- [ ] Configure Kafka replication factor ≥3
-- [ ] Enable Prometheus remote write
-- [ ] Configure log aggregation (ELK/Loki)
-- [ ] Set up alerting channels (PagerDuty/Slack)
-- [ ] Run chaos engineering tests
-
----
 
 ## Documentation
 
@@ -439,26 +428,6 @@ Pre-loaded compliance rules for:
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-## Team & Acknowledgments
-
-Built by the AeroRisk Engineering Team with contributions from:
-
-- Senior Staff Engineers & Architects
-- AIML & GenAI Specialists
-- SRE & Platform Engineers
-
-**Special Thanks**: LMAX Exchange for the Disruptor pattern, LangChain for LangGraph, and the open-source community.
-
----
-
-## Support
-
-- **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/aerorisk/ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/aerorisk/ai/discussions)
 
 ---
 
