@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "aerorisk-ai-guardrail"
+version = "0.1.0"
+description = "Multi-Agent AI Risk Orchestration for AeroRisk AI"
+authors = ["AeroRisk Team <team@aerorisk.ai>"]
+readme = "README.md"
+packages = [{include = "aerorisk", from = "."}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langgraph = "^0.2.0"
+langchain = "^0.3.0"
+langchain-core = "^0.3.0"
+pydantic = "^2.0.0"
+kafka-python-ng = "^2.2.0"
+redis = "^5.0.0"
+qdrant-client = "^1.7.0"
+psycopg2-binary = "^2.9.0"
+prometheus-client = "^0.20.0"
+opentelemetry-api = "^1.27.0"
+opentelemetry-sdk = "^1.27.0"
+opentelemetry-exporter-prometheus = "^0.48b0"
+httpx = "^0.27.0"
+numpy = "^1.26.0"
+scikit-learn = "^1.3.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+locust = "^2.30.0"
+black = "^24.0.0"
+mypy = "^1.10.0"
+ruff = "^0.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
