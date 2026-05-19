@@ -1,0 +1,46 @@
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant RB as Ring Buffer
+    participant ME as Matching Engine
+    participant L as Ledger
+    participant K as Kafka
+    participant AI as AI Pipeline
+    participant R as Redis
+
+    C->>G: Submit Order (gRPC)
+    activate G
+    G->>G: Validate & Auth
+    G->>RB: Publish Event
+    activate RB
+    RB-->>G: Acknowledge
+    G-->>C: Order Accepted
+    deactivate G
+
+    RB->>ME: Process Batch
+    activate ME
+    ME->>ME: Match Orders
+    ME->>L: Update Balances
+    activate L
+    L-->>ME: Settlement Complete
+    deactivate L
+    ME->>K: Publish Trade Event
+    activate K
+    K-->>ME: Persisted
+    deactivate K
+    ME-->>RB: Complete
+    deactivate ME
+    deactivate RB
+
+    par Async AI Processing
+        K->>AI: Consume Event
+        activate AI
+        AI->>AI: Agent 1: Anomaly Detection
+        AI->>AI: Agent 2: RAG Lookup
+        AI->>AI: Agent 3: Decision
+        AI->>R: Update Circuit Breaker (if needed)
+        AI-->>K: Processing Complete
+        deactivate AI
+    end
+
+    Note over C,R: Happy Path: <1ms matching, <200ms AI

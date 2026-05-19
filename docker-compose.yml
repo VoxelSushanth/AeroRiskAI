@@ -1,0 +1,268 @@
+version: '3.8'
+
+services:
+  # =====================
+  # Core Services
+  # =====================
+  
+  # Redis for account state and circuit breakers
+  redis:
+    image: redis:7-alpine
+    container_name: aerorisk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerorisk-network
+
+  # Redpanda (Kafka-compatible) for event streaming
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.26
+    container_name: aerorisk-redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+    ports:
+      - 9092:9092
+      - 29092:29092
+      - 8081:8081
+      - 8082:8082
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9644/v1/status/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerorisk-network
+
+  # Qdrant for vector search
+  qdrant:
+    image: qdrant/qdrant:v1.7.0
+    container_name: aerorisk-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerorisk-network
+
+  # PostgreSQL for incident reports
+  postgres:
+    image: postgres:15-alpine
+    container_name: aerorisk-postgres
+    environment:
+      POSTGRES_USER: aerorisk
+      POSTGRES_PASSWORD: aerorisk_password
+      POSTGRES_DB: aerorisk_incidents
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/seed:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aerorisk"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerorisk-network
+
+  # =====================
+  # Application Services
+  # =====================
+
+  # Go Engine - Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: infra/docker/engine.Dockerfile
+    container_name: aerorisk-gateway
+    ports:
+      - "8080:8080"
+      - "8082:8082"
+      - "9090:9090"
+    environment:
+      - ENVIRONMENT=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BROKERS=redpanda:29092
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aerorisk-network
+
+  # Go Engine - Matching Engine
+  engine:
+    build:
+      context: .
+      dockerfile: infra/docker/engine.Dockerfile
+    container_name: aerorisk-engine
+    command: ["./engine"]
+    environment:
+      - ENVIRONMENT=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BROKERS=redpanda:29092
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aerorisk-network
+
+  # Go Engine - Admin Service
+  admin:
+    build:
+      context: .
+      dockerfile: infra/docker/engine.Dockerfile
+    container_name: aerorisk-admin
+    command: ["./admin"]
+    ports:
+      - "8081:8081"
+    environment:
+      - ENVIRONMENT=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aerorisk-network
+
+  # AI Guardrail Service
+  ai-guardrail:
+    build:
+      context: .
+      dockerfile: infra/docker/ai_guardrail.Dockerfile
+    container_name: aerorisk-ai-guardrail
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=aerorisk
+      - POSTGRES_PASSWORD=aerorisk_password
+      - POSTGRES_DB=aerorisk_incidents
+      - KAFKA_BROKERS=redpanda:29092
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aerorisk-network
+
+  # =====================
+  # Observability Stack
+  # =====================
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: aerorisk-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aerorisk-network
+
+  # Grafana for dashboards
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: aerorisk-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aerorisk-network
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.49.0
+    container_name: aerorisk-jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - aerorisk-network
+
+networks:
+  aerorisk-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  redpanda_data:
+  qdrant_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:

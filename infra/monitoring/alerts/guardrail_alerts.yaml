@@ -1,0 +1,112 @@
+groups:
+  - name: guardrail_alerts
+    rules:
+      # AI Pipeline High Latency
+      - alert: AIPipelineHighLatency
+        expr: histogram_quantile(0.95, rate(ai_pipeline_latency_seconds_bucket[5m])) > 0.2
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AI pipeline latency too high"
+          description: "P95 latency is {{ $value }}s, exceeding 200ms threshold"
+
+      # LLM Inference Errors
+      - alert: LLMInferenceErrors
+        expr: rate(llm_inference_errors_total[5m]) > 0.05
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "LLM inference errors detected"
+          description: "Error rate is {{ $value }} errors/sec"
+
+      # Vector Search Slow
+      - alert: VectorSearchSlow
+        expr: histogram_quantile(0.95, rate(vector_search_latency_seconds_bucket[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Vector search latency too high"
+          description: "P95 latency is {{ $value }}s, exceeding 10ms threshold"
+
+      # Risk Score Distribution Shift
+      - alert: RiskScoreDistributionShift
+        expr: abs(rate(risk_score_average[5m]) - risk_score_baseline) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Risk score distribution shifted significantly"
+          description: "Average risk score changed by {{ $value }}"
+
+      # Circuit Breaker Triggered by AI
+      - alert: AICircuitBreakerTriggered
+        expr: rate(ai_circuit_breaker_triggers_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AI circuit breaker triggering frequently"
+          description: "Trigger rate is {{ $value }}/sec"
+
+      # Kafka Consumer Lag (AI)
+      - alert: AIKafkaConsumerLag
+        expr: kafka_consumer_lag_max{consumer_group="ai-guardrail"} > 5000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AI Kafka consumer lag too high"
+          description: "Max lag is {{ $value }} messages"
+
+      # Incident Report Creation Spike
+      - alert: IncidentReportSpike
+        expr: rate(incident_reports_created_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spike in incident report creation"
+          description: "{{ $value }} reports/sec being created"
+
+      # Sanctions Match Rate High
+      - alert: SanctionsMatchRateHigh
+        expr: rate(sanctions_matches_total[5m]) > 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High sanctions match rate detected"
+          description: "{{ $value }} matches/sec - potential systemic issue"
+
+      # Agent Processing Queue Backlog
+      - alert: AgentQueueBacklog
+        expr: agent_queue_depth > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Agent processing queue backlog"
+          description: "Queue depth is {{ $value }} events"
+
+      # PostgreSQL Connection Pool Exhaustion
+      - alert: PostgresConnectionPoolExhaustion
+        expr: postgres_connection_pool_available / postgres_connection_pool_max < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL connection pool nearly exhausted"
+          description: "Only {{ $value | humanizePercentage }} connections available"
+
+      # Qdrant Collection Health
+      - alert: QdrantCollectionHealth
+        expr: qdrant_collection_status != 1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Qdrant collection health check failed"
+          description: "Collection {{ $labels.collection }} status is unhealthy"

@@ -1,0 +1,42 @@
+# FINRA Compliance Rules
+
+## Rule 3110 - Supervision
+1. Each member shall establish and maintain a system to supervise the activities of each associated person.
+2. Supervisory procedures must be reasonably designed to achieve compliance with applicable securities laws.
+3. Regular review and updating of supervisory procedures is required.
+
+## Rule 3120 - Supervisory Control System
+1. Members must establish, maintain, and enforce written supervisory control policies and procedures.
+2. Annual review of business lines and locations is required.
+3. Summary report must be provided to senior management annually.
+
+## Rule 5310 - Best Execution and Interpositioning
+1. Orders must be executed at the most favorable terms reasonably available under the circumstances.
+2. Regular and rigorous review of execution quality is required.
+3. Interpositioning between customer and market is prohibited unless beneficial to customer.
+
+## Rule 2090 - Know Your Customer
+1. Members must use reasonable diligence to know and retain essential facts concerning every customer.
+2. Facts include investment profile, risk tolerance, and investment objectives.
+3. Information must be updated regularly.
+
+## Rule 2111 - Suitability
+1. Recommendations must be suitable based on customer's investment profile.
+2. Three main suitability obligations: reasonable basis, customer-specific, quantitative.
+3. Institutional customers may have different suitability standards.
+
+## Rule 6130 - Order Audit Trail System (OATS)
+1. Members must record and report order information to OATS.
+2. Clock synchronization within 50 milliseconds of NIST time is required.
+3. Electronic order handling requires detailed audit trail.
+
+## Market Making Rules
+- Minimum quote size requirements apply
+- Maximum spread limitations in certain securities
+- Continuous two-sided quoting obligations
+
+## Key Risk Indicators
+- Maximum daily loss limit per customer: $50,000 (retail)
+- Maximum concentration in single security: 25% of portfolio
+- Pattern day trader minimum equity: $25,000
+- Margin maintenance requirement: 25% (long), 30% (short)

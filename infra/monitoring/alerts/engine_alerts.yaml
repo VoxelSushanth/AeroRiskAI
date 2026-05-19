@@ -1,0 +1,82 @@
+groups:
+  - name: engine_alerts
+    rules:
+      # High Latency Alert
+      - alert: EngineHighLatency
+        expr: histogram_quantile(0.99, rate(matching_engine_latency_seconds_bucket[5m])) > 0.001
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Matching engine latency too high"
+          description: "P99 latency is {{ $value }}s, exceeding 1ms threshold"
+
+      # Low TPS Alert
+      - alert: EngineLowTPS
+        expr: rate(matching_engine_orders_total[1m]) < 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Matching engine throughput too low"
+          description: "Current TPS is {{ $value }}, below expected 100k TPS"
+
+      # Order Book Imbalance
+      - alert: OrderBookImbalance
+        expr: abs(orderbook_bid_ask_ratio - 1) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Significant order book imbalance detected"
+          description: "Bid/ask ratio is {{ $value }}"
+
+      # Redis Connection Errors
+      - alert: RedisConnectionErrors
+        expr: rate(redis_connection_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis connection errors detected"
+          description: "Error rate is {{ $value }} errors/sec"
+
+      # Kafka Producer Lag
+      - alert: KafkaProducerLag
+        expr: kafka_producer_lag_max > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kafka producer lag too high"
+          description: "Max lag is {{ $value }} messages"
+
+      # Circuit Breaker Open
+      - alert: CircuitBreakerOpen
+        expr: circuit_breaker_state == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Circuit breaker is open"
+          description: "Circuit breaker {{ $labels.name }} is open, blocking transactions"
+
+      # Memory Usage High
+      - alert: EngineMemoryHigh
+        expr: go_memstats_heap_alloc_bytes / go_memstats_heap_sys_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Go engine memory usage high"
+          description: "Heap allocation is {{ $value | humanizePercentage }} of heap size"
+
+      # GC Pause Too Long
+      - alert: GCPauseTooLong
+        expr: rate(go_gc_duration_seconds_sum[5m]) / rate(go_gc_duration_seconds_count[5m]) > 0.001
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Go GC pause times too high"
+          description: "Average GC pause is {{ $value }}s"

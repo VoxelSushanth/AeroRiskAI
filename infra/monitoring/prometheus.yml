@@ -1,0 +1,65 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'aerorisk-ai'
+
+scrape_configs:
+  # Go Engine - Gateway
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['gateway:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # Go Engine - Matching Engine
+  - job_name: 'engine'
+    static_configs:
+      - targets: ['engine:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # Go Engine - Admin Service
+  - job_name: 'admin'
+    static_configs:
+      - targets: ['admin:8081']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # AI Guardrail Service
+  - job_name: 'ai-guardrail'
+    static_configs:
+      - targets: ['ai-guardrail:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 15s
+
+  # Redpanda
+  - job_name: 'redpanda'
+    static_configs:
+      - targets: ['redpanda:9644']
+    metrics_path: '/public_metrics'
+    scrape_interval: 15s
+
+  # Qdrant
+  - job_name: 'qdrant'
+    static_configs:
+      - targets: ['qdrant:6333']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # PostgreSQL
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:9187']
+    scrape_interval: 15s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
