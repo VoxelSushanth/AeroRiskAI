@@ -2,13 +2,9 @@
 
 **Low-Latency Distributed Transaction Engine with Multi-Agent AI Risk Orchestration**
 
-[![CI Pipeline](https://github.com/aerorisk/ai/actions/workflows/ci.yml/badge.svg)](https://github.com/aerorisk/ai/actions/workflows/ci.yml)
-[![Performance Benchmarks](https://github.com/aerorisk/ai/actions/workflows/bench.yml/badge.svg)](https://github.com/aerorisk/ai/actions/workflows/bench.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ---
 
-## 🚀 Overview
+## Overview
 
 AeroRisk AI is a production-grade distributed financial transaction platform engineered for ultra-low latency and high throughput. It combines a Go-based matching engine with a Python-based multi-agent AI risk orchestration system to provide real-time fraud detection, compliance enforcement, and circuit-breaker controls.
 
@@ -23,7 +19,7 @@ AeroRisk AI is a production-grade distributed financial transaction platform eng
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### System Diagram
 
@@ -85,7 +81,7 @@ Multi-agent LangGraph pipeline for risk orchestration:
 
 ---
 
-## ⚡ Performance Targets
+## Performance Targets
 
 | Component | Metric | Target |
 |-----------|--------|--------|
@@ -98,7 +94,7 @@ Multi-agent LangGraph pipeline for risk orchestration:
 
 ---
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -169,7 +165,7 @@ cd ai_guardrail && poetry run python -m aerorisk.main
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 aerorisk-ai/
@@ -265,7 +261,7 @@ aerorisk-ai/
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -283,7 +279,7 @@ See `.env.example` for full configuration reference.
 
 ---
 
-## 📊 Monitoring & Dashboards
+## Monitoring & Dashboards
 
 ### Pre-built Grafana Dashboards
 
@@ -319,7 +315,7 @@ Pre-configured alerts in `infra/monitoring/alerts/`:
 
 ---
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
 ### Go Engine Tests
 
@@ -352,7 +348,7 @@ poetry run pytest tests/ -v --cov=aerorisk
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Kubernetes Deployment
 
@@ -387,7 +383,7 @@ The K8s manifests include HPA configurations:
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -402,7 +398,7 @@ The K8s manifests include HPA configurations:
 
 ---
 
-## 🔐 Security & Compliance
+## Security & Compliance
 
 ### Built-in Controls
 
@@ -423,7 +419,7 @@ Pre-loaded compliance rules for:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/my-feature`)
@@ -440,13 +436,13 @@ Pre-loaded compliance rules for:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-## 👥 Team & Acknowledgments
+## Team & Acknowledgments
 
 Built by the AeroRisk Engineering Team with contributions from:
 
@@ -458,7 +454,7 @@ Built by the AeroRisk Engineering Team with contributions from:
 
 ---
 
-## 📞 Support
+## Support
 
 - **Documentation**: [docs/](docs/)
 - **Issues**: [GitHub Issues](https://github.com/aerorisk/ai/issues)
@@ -467,5 +463,5 @@ Built by the AeroRisk Engineering Team with contributions from:
 ---
 
 <p align="center">
-  <strong>🚀 Built for speed. Secured by AI. Engineered for trust.</strong>
+  <strong> Built for speed. Secured by AI. Engineered for trust.</strong>
 </p>
