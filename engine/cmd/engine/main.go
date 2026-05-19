@@ -7,29 +7,17 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/aerorisk-ai/engine/internal/disruptor"
-	"github.com/aerorisk-ai/engine/internal/ledger"
-	"github.com/aerorisk-ai/engine/internal/metrics"
-	"github.com/aerorisk-ai/engine/internal/orderbook"
-	"github.com/aerorisk-ai/engine/internal/publisher"
-	"github.com/aerorisk-ai/engine/pkg/event"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/prometheus"
-	"go.opentelemetry.io/otel/sdk/metric"
+	"github.com/aerorisk/engine/internal/disruptor"
+	"github.com/aerorisk/engine/internal/ledger"
+	"github.com/aerorisk/engine/internal/metrics"
+	"github.com/aerorisk/engine/internal/orderbook"
+	"github.com/aerorisk/engine/internal/publisher"
+	"github.com/aerorisk/engine/pkg/event"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	// Setup OpenTelemetry Prometheus exporter
-	exporter, err := prometheus.New()
-	if err != nil {
-		log.Fatalf("failed to create prometheus exporter: %v", err)
-	}
-	meterProvider := metric.NewMeterProvider(metric.WithReader(exporter))
-	otel.SetMeterProvider(meterProvider)
-	defer meterProvider.Shutdown(ctx)
 
 	// Initialize metrics
 	metrics.Init()

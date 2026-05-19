@@ -1,73 +1,35 @@
 ```
+# Compiled and build artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+*.out
+
 # Dependencies
-poetry.lock
+vendor/
+*.mod
+*.sum
 
 # Logs and temp files
 *.log
-
-# Environment
-.env
-.env.local
-*.env.*
+*.tmp
+*.swp
 
 # Editors
 .vscode/
 .idea/
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-.venv.bak/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
+# Coverage
+coverage/
+htmlcov/
 .coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/modules/
-*.tmproj
-*.sw?
-.DS_Store
-Thumbs.db
 
-# Go
-*.out
-*.exe
-*.dll
-*.so
-*.dylib
-*.test
-*.prof
-go.mod
-go.sum
-vendor/
-!vendor/**/*
-!.gitmodules
-
-# Build artifacts
-dist/
-build/
-target/
-bin/
-pkg/
-
-# Documentation
-docs/_build/
-docs/build/
-
-# Temporary files
-*.tmp
-*~
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
+*.env.*
 ```

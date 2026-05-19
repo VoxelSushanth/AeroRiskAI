@@ -3,7 +3,7 @@ package gateway
 import (
 "context"
 
-"github.com/aerorisk-ai/engine/internal/publisher"
+"github.com/aerorisk/engine/internal/publisher"
 "google.golang.org/grpc"
 )
 
