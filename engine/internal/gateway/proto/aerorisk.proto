@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package aerorisk;
+
+option go_package = "github.com/aerorisk/engine/internal/gateway/proto";
+
+service AeroRiskService {
+  rpc SubmitOrder (OrderRequest) returns (OrderResponse);
+  rpc CancelOrder (CancelRequest) returns (CancelResponse);
+  rpc GetBalance (BalanceRequest) returns (BalanceResponse);
+  rpc StreamTrades (StreamRequest) returns (stream TradeEvent);
+}
+
+message OrderRequest {
+  uint64 user_id = 1;
+  string symbol = 2;
+  string side = 3;
+  int64 price = 4;
+  int64 quantity = 5;
+}
+
+message OrderResponse {
+  uint64 order_id = 1;
+  string status = 2;
+  repeated Trade trades = 3;
+}
+
+message Trade {
+  uint64 trade_id = 1;
+  int64 price = 2;
+  int64 quantity = 3;
+  uint64 buyer_id = 4;
+  uint64 seller_id = 5;
+}
+
+message CancelRequest {
+  uint64 user_id = 1;
+  uint64 order_id = 2;
+  string symbol = 3;
+}
+
+message CancelResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message BalanceRequest {
+  uint64 user_id = 1;
+}
+
+message BalanceResponse {
+  int64 balance = 1;
+  string currency = 2;
+}
+
+message StreamRequest {
+  string symbol = 1;
+}
+
+message TradeEvent {
+  uint64 trade_id = 1;
+  string symbol = 2;
+  int64 price = 3;
+  int64 quantity = 4;
+  int64 timestamp = 5;
+}
