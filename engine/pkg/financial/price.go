@@ -8,6 +8,10 @@ func NewPrice(value int64) Price {
 	return Price(value)
 }
 
+func PriceFromInt64(value int64) Price {
+	return Price(value)
+}
+
 func (p Price) Value() int64 {
 	return int64(p)
 }

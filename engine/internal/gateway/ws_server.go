@@ -1,13 +1,12 @@
 package gateway
 
 import (
-"context"
-"encoding/json"
-"net/http"
-"sync"
+	"encoding/json"
+	"net/http"
+	"sync"
 
-"github.com/aerorisk/engine/internal/publisher"
-"github.com/gorilla/websocket"
+	"github.com/aerorisk/engine/internal/publisher"
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{

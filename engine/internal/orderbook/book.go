@@ -6,35 +6,6 @@ import (
 	"github.com/aerorisk/engine/pkg/financial"
 )
 
-type Level struct {
-	Price    financial.Price
-	Quantity financial.Quantity
-	Orders   []*Order
-}
-
-func NewLevel(price financial.Price) *Level {
-	return &Level{
-		Price:    price,
-		Quantity: 0,
-		Orders:   make([]*Order, 0),
-	}
-}
-
-func (l *Level) AddOrder(order *Order) {
-	l.Orders = append(l.Orders, order)
-	l.Quantity += order.Quantity
-}
-
-func (l *Level) RemoveOrder(orderID uint64) {
-	for i, order := range l.Orders {
-		if order.ID == orderID {
-			l.Quantity -= order.Quantity
-			l.Orders = append(l.Orders[:i], l.Orders[i+1:]...)
-			break
-		}
-	}
-}
-
 type OrderBook struct {
 	symbol     financial.Symbol
 	bidLevels  map[int64]*Level
@@ -75,7 +46,7 @@ func (ob *OrderBook) AddOrder(order *Order) {
 
 	level, exists := levels[price]
 	if !exists {
-		level = NewLevel(order.Price)
+		level = NewLevelFromPrice(price)
 		levels[price] = level
 	}
 
