@@ -93,6 +93,8 @@ class Settings(BaseModel):
     environment: str = Field(default="development")
     log_level: str = Field(default="INFO")
     service_name: str = Field(default="aerorisk-ai-guardrail")
+    service_version: str = Field(default="1.0.0")
+    instance_id: str = Field(default="default")
 
     # Sub-settings
     kafka: KafkaSettings = Field(default_factory=KafkaSettings)
@@ -104,12 +106,20 @@ class Settings(BaseModel):
 
     # Observability
     otel_exporter_endpoint: str = Field(default="http://localhost:4317")
+    otel_insecure: bool = Field(default=True)
+    otel_max_queue_size: int = Field(default=2048)
+    otel_schedule_delay_millis: int = Field(default=5000)
+    otel_max_batch_size: int = Field(default=512)
     metrics_enabled: bool = Field(default=True)
     tracing_enabled: bool = Field(default=True)
 
     class Config:
         env_file = ".env"
         env_nested_delimiter = "__"
+
+
+# Global settings instance
+settings = load_settings()
 
 
 def load_settings() -> Settings:
