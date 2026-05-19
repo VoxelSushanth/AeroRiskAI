@@ -1,26 +1,11 @@
 ```
 # Dependencies
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.venv/
-venv/
-env/
-ENV/
+poetry.lock
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
-*.so
-*.dylib
-*.dll
-
-# Logs
+# Logs and temp files
 *.log
 
-# Environment variables
+# Environment
 .env
 .env.local
 *.env.*
@@ -28,19 +13,61 @@ dist/
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+*.tmproj
+*.sw?
 .DS_Store
 Thumbs.db
 
-# Coverage
-.coverage
-coverage/
-htmlcov/
+# Go
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.prof
+go.mod
+go.sum
+vendor/
+!vendor/**/*
+!.gitmodules
 
-# Testing
-.pytest_cache/
-.mypy_cache/
+# Build artifacts
+dist/
+build/
+target/
+bin/
+pkg/
+
+# Documentation
+docs/_build/
+docs/build/
+
+# Temporary files
+*.tmp
+*~
+.DS_Store
+Thumbs.db
 ```
